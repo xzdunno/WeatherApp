@@ -36,14 +36,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         bind = ActivityMainBinding.inflate(layoutInflater)
         setContentView(bind.root)
-        bind.imgIcon.setImageResource(R.drawable.sun2)
-        bind.wethView.setWeatherData(PrecipType.RAIN)
-        bind.wethView.angle=20
-        bind.wethView.speed=1000
-        bind.wethView.emissionRate= 500F
-        bind.wethView.fadeOutPercent=100F
-        bind.recHour.layoutManager=LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
-        url2="https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$lon&exclude=minutely,daily,alerts&lang=ru&units=metric&appid=3797d6452235e4b0ca898b18e28d8ce1"
+        setting()
 
 run(url2)
 
@@ -68,6 +61,15 @@ run(url2)
             }
         })
     }
+    fun setting(){
+        bind.imgIcon.setImageResource(R.drawable.sun2)
+        bind.wethView.setWeatherData(PrecipType.RAIN)
+        bind.wethView.angle=20
+        bind.wethView.speed=1000
+        bind.wethView.emissionRate= 500F
+        bind.wethView.fadeOutPercent=100F
+        bind.recHour.layoutManager=LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
+        url2="https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$lon&exclude=minutely,daily,alerts&lang=ru&units=metric&appid=3797d6452235e4b0ca898b18e28d8ce1"}
 data class all(var hourly:List<Hour>)
 data class Hour(val temp:String,val humidity:String,val weather:List<Icon>)
 data class Icon(val icon:String)}
