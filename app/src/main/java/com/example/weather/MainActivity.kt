@@ -60,7 +60,7 @@ run(url2)
         bind.wethView.emissionRate= 500F
         bind.wethView.fadeOutPercent=100F
         bind.recHour.layoutManager=LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
-        url2="https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$lon&exclude=minutely,daily,alerts&lang=ru&units=metric&appid=3797d6452235e4b0ca898b18e28d8ce1"}
+        url2="https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$lon&exclude=minutely,daily,alerts&lang=ru&units=metric&appid="}
 data class all(var hourly:List<Hour>)
 data class Hour(val temp:String,val humidity:String,val weather:List<Icon>)
 data class Icon(val icon:String)}
