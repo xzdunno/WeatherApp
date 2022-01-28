@@ -3,19 +3,24 @@ package com.example.weather
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.weather.db.Hourly
+import com.example.weather.model.Hour
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.hour_row.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class HourAdapter(val all: MainActivity.all):RecyclerView.Adapter<CustomViewHolder>() {
-
+class HourAdapter(/*val all: MainActivity.all*/):RecyclerView.Adapter<CustomViewHolder>() {
+    private var listData: List<Hourly>? = null
+    fun setListData(listData: List<Hourly>?) {
+        this.listData = listData
+    }
 
     override fun getItemCount():Int{
         //
-        return 24
+        if (listData==null) return 0
+        return listData?.size!!
     }
 
 
@@ -24,20 +29,31 @@ class HourAdapter(val all: MainActivity.all):RecyclerView.Adapter<CustomViewHold
         val view=LayoutInflater.from(parent.context).inflate(R.layout.hour_row,parent,false)
         return CustomViewHolder(view)
     }
-
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
+        val timeStr:String
+       if(holder.time+position+1>=24){
+           if(holder.time+position-23<10) {
+            timeStr="0"+(holder.time+position-23).toString()+":00"
+           }
+           else {timeStr=(holder.time+position-23).toString()+":00"}
+       }
+       else{timeStr=(holder.time+position+1).toString()+":00"}
+
+holder.txtTime.text=timeStr
+holder.bind(listData?.get(position)!!)
 
 
-    holder.view.findViewById<TextView>(R.id.txtTemp).text=all.hourly[position+1].temp.toDouble().toInt().toString()+"°"
-    holder.view.findViewById<TextView>(R.id.txtHumidity).text=all.hourly[position+1].humidity+"%"
-    holder.view.findViewById<TextView>(R.id.txtTime).text=
-        (SimpleDateFormat("hh").format(Calendar.getInstance().time).toInt()+position+1).toString()
-        Picasso.get().load("http://openweathermap.org/img/wn/${all.hourly[position+1].weather[0].icon}@2x.png").into(holder.view.findViewById<ImageView>(R.id.imgIcon))
-
-    }
-
-
-}
+}}
 class CustomViewHolder(var view: View):RecyclerView.ViewHolder(view){
+    val txtTemp=view.txtTemp
+    val txtHumidity=view.txtHumidity
+    val txtTime=view.txtTime
+    val imgIcon=view.imgIcon
 
+fun bind(hourly: Hourly){
+txtHumidity.text=hourly.humidity+"%"
+    txtTemp.text=hourly.temp.toDouble().toInt().toString()+"°"
+    Picasso.get().load("http://openweathermap.org/img/wn/${hourly.picture}@2x.png").into(imgIcon)
+}
+    val time=SimpleDateFormat("HH").format(Calendar.getInstance().time).toInt()
 }
