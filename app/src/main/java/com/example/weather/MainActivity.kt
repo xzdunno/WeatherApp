@@ -48,7 +48,7 @@ import java.io.IOException
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private val placesKey="AIzaSyDQoUDR8fOeriyN5RpwkGyPPuzpABhAffA"
+    private val placesKey=""
     private val AUTOCOMPLETE_REQUEST_CODE = 1
     lateinit var bind:ActivityMainBinding
     lateinit var url2:String
@@ -120,7 +120,7 @@ bind.drawdLay.openDrawer(GravityCompat.START)
             recyclerViewAdapter = HourAdapter()
             adapter =recyclerViewAdapter
         }
-        url2="https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$lon&exclude=minutely,daily,alerts&lang=ru&units=metric&appid=3797d6452235e4b0ca898b18e28d8ce1"
+        url2="https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$lon&exclude=minutely,daily,alerts&lang=ru&units=metric&appid="
         var (latCur,lonCur)=mViewModel.getLocation(applicationContext)
     mViewModel.getAllData().observe(this@MainActivity, Observer<List<Hourly>>{
         recyclerViewAdapter.setListData(it)
@@ -156,7 +156,7 @@ bind.drawdLay.openDrawer(GravityCompat.START)
         val options:MutableMap<String,String> =HashMap()
         options.put("lat",latCur)
         options.put("lon",lonCur)
-        options.put("appid","3797d6452235e4b0ca898b18e28d8ce1")
+        options.put("appid","")
         options.put("exclude","minutely,daily,alerts")
         options.put("units","metric")
         options.put("lang","ru")
@@ -177,7 +177,7 @@ bind.drawdLay.openDrawer(GravityCompat.START)
         }
         GlobalScope.launch(Dispatchers.IO) {mViewModel.apiCall(options)
             options.put("exclude","minutely,daily,alerts,hourly")
-run("http://api.openweathermap.org/geo/1.0/reverse?lat=$latCur&lon=$lonCur&limit=1&appid=3797d6452235e4b0ca898b18e28d8ce1&lang=ru",options)
+run("http://api.openweathermap.org/geo/1.0/reverse?lat=$latCur&lon=$lonCur&limit=1&appid=&lang=ru",options)
 
         }
 
