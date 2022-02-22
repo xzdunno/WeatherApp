@@ -2,100 +2,242 @@ package com.example.weather
 
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Notification
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weather.databinding.ActivityMainBinding
 import com.example.weather.db.Hourly
-import com.example.weather.model.Hour
+import com.example.weather.db.WeekPat
 import com.example.weather.viemodel.MainViewModel
+import com.example.weather.viemodel.WeekAdapter
 import com.github.matteobattilana.weather.PrecipType
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.DayOfWeek
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
-import com.google.gson.Gson
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import okhttp3.*
-import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
 
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private val placesKey="AIzaSyDQoUDR8fOeriyN5RpwkGyPPuzpABhAffA"
+class MainActivity : AppCompatActivity(),LocationListener {
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private val placesKey=BuildConfig.MAPS_API_KEY
     private val AUTOCOMPLETE_REQUEST_CODE = 1
+    private var PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION=100
+    private var locationPermissionGranted=false
     lateinit var bind:ActivityMainBinding
-    lateinit var url2:String
-    var city=""
+    var kok:Location?=null
+    var latCur="50"
+    var lonCur="50"
+    lateinit var mViewModel:MainViewModel
     private val client = OkHttpClient()
-     var lat:String=""
-     var lon:String=""
     private lateinit var recyclerViewAdapter: HourAdapter
+    private lateinit var recViewWeekAdapter: WeekAdapter
     @DelicateCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        bind = ActivityMainBinding.inflate(layoutInflater)
+        super.onCreate(savedInstanceState)//вызывает метод суперкласса AppCompatActivity()
+        bind = ActivityMainBinding.inflate(layoutInflater)//Binding
         setContentView(bind.root)
-        Places.initialize(applicationContext,placesKey)
-        val placesClient:PlacesClient=Places.createClient(this)
-        val permissions:Array<String> = arrayOf("android.permission.ACCESS_FINE_LOCATION")
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+        val weekDayOfWeek:DayOfWeek= DayOfWeek.FRIDAY
+        mViewModel=ViewModelProvider(this).get(MainViewModel::class.java) //создаём объект MainViewModel
+        bind.recHour.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity,LinearLayoutManager.HORIZONTAL,false)
+            recyclerViewAdapter = HourAdapter()
+            adapter =recyclerViewAdapter
+        }
+        bind.recWeek.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity,LinearLayoutManager.VERTICAL,false)
+            recViewWeekAdapter = WeekAdapter()
+            adapter =recViewWeekAdapter
+        }
+        mViewModel.getAllData().observe(this@MainActivity, Observer<List<Hourly>>{
+            recyclerViewAdapter.setListData(it)
+            recyclerViewAdapter.notifyDataSetChanged()
+        })
+        mViewModel.getAllDataWeek().observe(this@MainActivity, Observer<List<WeekPat>>{
+            recViewWeekAdapter.setListData(it)
+            recViewWeekAdapter.notifyDataSetChanged()
+        })
+        mViewModel.getLastRec().observe(this@MainActivity,{
+            if(it!=null){
+                bind.curTemp.text=it.temp+"°"
+                bind.curFeels.text=it.feels_like+"°"
+                bind.cityTxt.text=it.cityName
+                if(it.icon=="13n"||it.icon=="13d"){
+                    bind.curImgIcon.setImageResource(R.drawable.snowflake)
+                }
+                else
+                    if(it.icon=="01n") bind.curImgIcon.setImageResource(R.drawable.moon)
+                    else Picasso.get().load("http://openweathermap.org/img/wn/${it.icon}@2x.png").into(bind.curImgIcon)
+                val main=it.main
+                bind.wethView.angle=20
+                bind.wethView.speed=1000
+                bind.wethView.emissionRate= 500F
+                bind.wethView.fadeOutPercent=100F
+                if(main=="Snow"){
+                    bind.wethView.setWeatherData(PrecipType.SNOW)
+                    bind.colImg.setImageResource(R.drawable.snow)
+                }
+                else if(main=="Rain"){
+                    bind.wethView.setWeatherData(PrecipType.RAIN)
+                    bind.colImg.setImageResource(R.drawable.rain2)
+                }
+                else if(main=="Clear"){
+                    bind.wethView.setWeatherData(PrecipType.CLEAR)
+                    bind.colImg.setImageResource(R.drawable.clear)}
+                else {
+                    bind.wethView.setWeatherData(PrecipType.CLEAR)
+                    bind.colImg.setImageResource(R.drawable.clouds)
+                }}
+        })
+        Places.initialize(applicationContext, placesKey)
+        val placesClient: PlacesClient = Places.createClient(this)
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        val permissions: Array<String> = arrayOf("android.permission.ACCESS_FINE_LOCATION","android.permission.ACCESS_COARSE_LOCATION")
+
         ActivityCompat.requestPermissions(this@MainActivity, permissions, 123)
-       // obtieneLocalizacion()
-bind.drawdLay.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-        setting()
-        /*bind.fragBtn.setOnClickListener(){
-bind.drawdLay.openDrawer(GravityCompat.START)
-        }*/
-        /*bind.searchCityBtn.setOnClickListener(){
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Toast.makeText(this, "Разрешение не предоставлено", Toast.LENGTH_LONG).show()
+        }
+        val lm =
+            this.getSystemService(Context.LOCATION_SERVICE) as LocationManager //подключаем менеджер локаций
+        val isGPSEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        // проверяем что GPS включен
+        val cor=mViewModel.getCoords()
+        //Log.d("cor",cor.lat+" "+cor.lon)
+        if(cor==null){
+            if (isGPSEnabled) {
+                // Log.d("latlon1",kok?.latitude.toString()+" "+kok?.longitude.toString())
+                lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 6000, 10f, this)
+                kok=lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                if(kok!=null){
+                    latCur=kok?.latitude.toString()
+                    lonCur=kok?.longitude.toString()
+                    setting()}
+                else{
+                    val top=mViewModel.getCoords()
+                    if(top!=null) {
+                        latCur = top.lat
+                        lonCur = top.lon
+                        setting()
+                    }
+                }
+
+                /*lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)!!.latitude.toString(),lm.getLastKnownLocation(
+                        LocationManager.GPS_PROVIDER)!!.longitude.toString()*/
+            } else {
+                Toast.makeText(this, "Пожалуйста, включите GPS! =)", Toast.LENGTH_LONG).show()
+            }}
+        else{
+            lonCur=cor.lon
+            latCur=cor.lat
+            GlobalScope.launch(Dispatchers.IO) {mViewModel.apiCall(options())
+                mViewModel.getCurWeath(options(),cor.cityName)
+                mViewModel.getWeekWeath(options())
+            }
+        }
+
+        bind.searchCityBtn.setOnClickListener(){
 
             // Set the fields to specify which types of place data to
             // return after the user has made a selection.
-            val fields = listOf(Place.Field.ID, Place.Field.NAME)
+            val kok=Place.Field.LAT_LNG
+            val fields = listOf(Place.Field.ID, Place.Field.NAME,Place.Field.LAT_LNG)
 
             // Start the autocomplete intent.
             val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
                 .build(this@MainActivity)
             startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
         }
+        
+        bind.backBtn.setOnClickListener(){
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Toast.makeText(this, "Разрешение не предоставлено", Toast.LENGTH_LONG).show()
+            }
+            val lm =
+                this.getSystemService(Context.LOCATION_SERVICE) as LocationManager //подключаем менеджер локаций
+            val isGPSEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+                if (isGPSEnabled) {
 
+                    lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 6000, 10f, this)
+                    kok=lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                    if(kok!=null){
+                        latCur=kok?.latitude.toString()
+                        lonCur=kok?.longitude.toString()
+                        setting()}
+                    else{
+
+                    }
+
+                } else {
+                    Toast.makeText(this, "Пожалуйста, включите GPS! =)", Toast.LENGTH_LONG).show()
+                }
+        }
     }
+    override fun onLocationChanged(location: Location) {
+        /*if(kok==null){
+            latCur=location.latitude.toString()
+            lonCur=location.longitude.toString()
+        }*/}
+    override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
+    override fun onProviderEnabled(provider: String) {}
+    override fun onProviderDisabled(provider: String) {}
+    /*bind.fragBtn.setOnClickListener(){
+bind.drawdLay.openDrawer(GravityCompat.START)
+    }*/
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
             when (resultCode) {
                 Activity.RESULT_OK -> {
                     data?.let {
                         val place = Autocomplete.getPlaceFromIntent(data)
-                        Log.i(TAG, "Place: ${place.name}, ${place.id}")
+                        latCur=place.latLng?.latitude.toString()
+                        lonCur=place.latLng?.longitude.toString()
+
+                        GlobalScope.launch(Dispatchers.IO) {mViewModel.apiCall(options())
+                            mViewModel.getCurWeath(options(),place.name.toString())
+                            mViewModel.getWeekWeath(options())
+                        }
+                        Log.i(TAG, "Place: ${place.name}, ${place.id}, ${place.latLng}")
                     }
                 }
                 AutocompleteActivity.RESULT_ERROR -> {
-                    // TODO: Handle the error.
                     data?.let {
                         val status = Autocomplete.getStatusFromIntent(data)
                         Log.i(TAG, status.statusMessage.toString())
@@ -107,81 +249,51 @@ bind.drawdLay.openDrawer(GravityCompat.START)
             }
             return
         }
-        super.onActivityResult(requestCode, resultCode, data)*/
-    }
-
-    fun setting(){
-        val mViewModel=ViewModelProvider(this).get(MainViewModel::class.java)
-        bind.recHour.apply {
-            layoutManager = LinearLayoutManager(this@MainActivity,LinearLayoutManager.HORIZONTAL,false)
-
-            val decoration  =  DividerItemDecoration(applicationContext, DividerItemDecoration.VERTICAL)
-            addItemDecoration(decoration)
-            recyclerViewAdapter = HourAdapter()
-            adapter =recyclerViewAdapter
-        }
-        url2="https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$lon&exclude=minutely,daily,alerts&lang=ru&units=metric&appid=3797d6452235e4b0ca898b18e28d8ce1"
-        var (latCur,lonCur)=mViewModel.getLocation(applicationContext)
-    mViewModel.getAllData().observe(this@MainActivity, Observer<List<Hourly>>{
-        recyclerViewAdapter.setListData(it)
-        recyclerViewAdapter.notifyDataSetChanged()
-    } )
-        mViewModel.getLastRec().observe(this@MainActivity,{
-            if(it!=null){
-            bind.curTemp.text=it.temp+"°"
-            bind.curFeels.text=it.feels_like+"°"
-            bind.cityTxt.text=it.cityName
-            Picasso.get().load("http://openweathermap.org/img/wn/${it.icon}@2x.png").into(bind.curImgIcon)
-            val main=it.main
-            bind.wethView.angle=20
-            bind.wethView.speed=1000
-            bind.wethView.emissionRate= 500F
-            bind.wethView.fadeOutPercent=100F
-            if(main=="Snow"){
-                bind.wethView.setWeatherData(PrecipType.SNOW)
-                bind.colImg.setImageResource(R.drawable.snow)
-            }
-            else if(main=="Rain"){
-                    bind.wethView.setWeatherData(PrecipType.RAIN)
-                    bind.colImg.setImageResource(R.drawable.rain2)
-                }
-                else if(main=="Clear"){
-                bind.wethView.setWeatherData(PrecipType.CLEAR)
-                bind.colImg.setImageResource(R.drawable.clear)}
-                else {
-                    bind.wethView.setWeatherData(PrecipType.CLEAR)
-                    bind.colImg.setImageResource(R.drawable.clouds)
-                }}
-        })
+        super.onActivityResult(requestCode, resultCode, data)}
+    val nots=Notification()
+    val kfk=System.currentTimeMillis()
+    fun options():MutableMap<String,String>{
         val options:MutableMap<String,String> =HashMap()
         options.put("lat",latCur)
         options.put("lon",lonCur)
-        options.put("appid","3797d6452235e4b0ca898b18e28d8ce1")
-        options.put("exclude","minutely,daily,alerts")
+        options.put("appid",BuildConfig.OPEN_WEATHER_KEY)
         options.put("units","metric")
         options.put("lang","ru")
+        return options
+    }
+    fun setting(){
         fun run(url: String,options:MutableMap<String,String>) {
             val request = Request.Builder()
                 .url(url)
                 .build()
-
             client.newCall(request).enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {}
                 override fun onResponse(call: Call, response: Response){
                     val str= response.body()?.string().toString()!!.drop(1).dropLast(1)
                     val arr=JSONObject(str)
                     val local=JSONObject(arr.getString("local_names"))
-                    runOnUiThread { mViewModel.getCurWeath(options, local.getString("ru"))}
+                    var check:String?=null
+                    try{check=local.getString("ru")}
+                    catch (e:JSONException){
+                    }
+                    if(check!=null)
+                        runOnUiThread {
+                            options.put("exclude","minutely,daily,alerts,hourly")
+                            mViewModel.getCurWeath(options, local.getString("ru"))}
+                    else runOnUiThread {
+                        options.put("exclude","minutely,daily,alerts,hourly")
+                        mViewModel.getCurWeath(options, local.getString("en"))}
+
                 }
             })
         }
-        GlobalScope.launch(Dispatchers.IO) {mViewModel.apiCall(options)
-            options.put("exclude","minutely,daily,alerts,hourly")
-run("http://api.openweathermap.org/geo/1.0/reverse?lat=$latCur&lon=$lonCur&limit=1&appid=3797d6452235e4b0ca898b18e28d8ce1&lang=ru",options)
+        GlobalScope.launch(Dispatchers.IO) {mViewModel.apiCall(options())
 
+            run("http://api.openweathermap.org/geo/1.0/reverse?lat=$latCur&lon=$lonCur&limit=1&appid=${BuildConfig.OPEN_WEATHER_KEY}&lang=ru",options())
+            mViewModel.getWeekWeath(options())
         }
 
 
     }
 
-   }
+}

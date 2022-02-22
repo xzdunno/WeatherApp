@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    >
+<TextView
+    android:layout_width="140dp"
+    android:layout_height="wrap_content"
+    android:id="@+id/weekDayTxt"
+    android:layout_marginLeft="15dp"
+    android:textSize="19sp"
+    android:layout_marginTop="6dp"
+    android:textColor="@color/white">
+</TextView>
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="50dp"
+        android:id="@+id/weekIcon">
+    </ImageView>
+    <TextView
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/weekTempDayTxt"
+        android:textSize="18sp"
+        android:layout_marginLeft="15dp"
+        android:textColor="@color/white"
+        android:layout_marginTop="6dp"></TextView>
+    <TextView
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/weekTempNightTxt"
+        android:textSize="18sp"
+        android:layout_marginLeft="7dp"
+        android:textColor="@color/white"
+        android:layout_marginTop="6dp"
+        ></TextView>
+</LinearLayout>

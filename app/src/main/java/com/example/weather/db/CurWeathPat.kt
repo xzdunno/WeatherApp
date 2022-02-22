@@ -6,12 +6,19 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "CurDB")
 data class CurWeathPat (
-    @PrimaryKey(autoGenerate = true)@ColumnInfo(name = "id") val id:Int=0,
-    @ColumnInfo val cityName:String,
-    @ColumnInfo val lat:String,
-    @ColumnInfo val lon:String,
-    @ColumnInfo val temp:String,
-    @ColumnInfo val feels_like:String,
-    @ColumnInfo val icon:String,
-    @ColumnInfo val main:String
+    @PrimaryKey(autoGenerate = true) val id:Int,
+     val cityName:String,
+     val lat:String,
+     val lon:String,
+     val temp:String,
+     val feels_like:String,
+     val icon:String,
+     val main:String
 )
+/*@ColumnInfo(name="city_name") val cityName:String,
+@ColumnInfo(name="lat") val lat:String,
+@ColumnInfo(name="lon") val lon:String,
+@ColumnInfo(name="temp") val temp:String,
+@ColumnInfo(name="feels_like") val feels_like:String,
+@ColumnInfo(name="icon") val icon:String,
+@ColumnInfo(name="main")*/

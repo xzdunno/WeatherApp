@@ -3,10 +3,7 @@ package com.example.weather.di
 import android.app.Application
 import android.content.Context
 import com.example.weather.data.RetroInterface
-import com.example.weather.db.AppDBDao
-import com.example.weather.db.AppDataBase
-import com.example.weather.db.CurDB
-import com.example.weather.db.CurWeathDBDao
+import com.example.weather.db.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,6 +36,16 @@ class AppModule {
     @Singleton
     fun getCurWeathDBDao(database: CurDB): CurWeathDBDao {
         return database.getCurWeathDBDao()
+    }
+    @Provides
+    @Singleton
+    fun getWeekDB(context: Application): WeekDataBase {
+        return WeekDataBase.getWeekDB(context)
+    }
+    @Provides
+    @Singleton
+    fun getWeekDBDao(database: WeekDataBase):WeekDBDao  {
+        return database.getWeekDBDao()
     }
     @Provides
     @Singleton

@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weather.db.Hourly
-import com.example.weather.model.Hour
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.hour_row.view.*
 import java.text.SimpleDateFormat
@@ -31,13 +30,15 @@ class HourAdapter(/*val all: MainActivity.all*/):RecyclerView.Adapter<CustomView
     }
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
         val timeStr:String
+        //Log.d("Position",position.toString())
        if(holder.time+position+1>=24){
            if(holder.time+position-23<10) {
             timeStr="0"+(holder.time+position-23).toString()+":00"
            }
            else {timeStr=(holder.time+position-23).toString()+":00"}
        }
-       else{timeStr=(holder.time+position+1).toString()+":00"}
+       else{
+           timeStr=(holder.time+position+1).toString()+":00"}
 
 holder.txtTime.text=timeStr
 holder.bind(listData?.get(position)!!)
@@ -53,7 +54,12 @@ class CustomViewHolder(var view: View):RecyclerView.ViewHolder(view){
 fun bind(hourly: Hourly){
 txtHumidity.text=hourly.humidity+"%"
     txtTemp.text=hourly.temp.toDouble().toInt().toString()+"°"
-    Picasso.get().load("http://openweathermap.org/img/wn/${hourly.picture}@2x.png").into(imgIcon)
+    if(hourly.picture=="13n"||hourly.picture=="13d"){
+        imgIcon.setImageResource(R.drawable.snowflake)
+    }
+    else
+        if(hourly.picture=="01n") imgIcon.setImageResource(R.drawable.moon)
+    else Picasso.get().load("http://openweathermap.org/img/wn/${hourly.picture}@2x.png").into(imgIcon)
 }
     val time=SimpleDateFormat("HH").format(Calendar.getInstance().time).toInt()
 }
