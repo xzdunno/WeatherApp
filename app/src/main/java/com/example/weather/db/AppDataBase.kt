@@ -7,9 +7,11 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.weather.model.Hour
 
-@Database(entities = [Hourly::class],version=1,exportSchema = false)
+@Database(entities = [Hourly::class,WeekPat::class,CurWeathPat::class],version=1,exportSchema = false)
 abstract class AppDataBase: RoomDatabase() {
     abstract fun getAppDBDao(): AppDBDao
+    abstract fun getWeekDBDao():WeekDBDao
+    abstract fun getCurWeathDBDao(): CurWeathDBDao
     companion object{
         @Volatile
         private var INSTANCE: AppDataBase?=null

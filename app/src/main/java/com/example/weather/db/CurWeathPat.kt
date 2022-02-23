@@ -14,6 +14,7 @@ data class CurWeathPat (
      val feels_like:String,
      val icon:String,
      val main:String
+
 )
 /*@ColumnInfo(name="city_name") val cityName:String,
 @ColumnInfo(name="lat") val lat:String,

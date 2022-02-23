@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/drawdLay"
+    android:id="@+id/coordLay"
     tools:context="com.example.weather.MainActivity"
-    android:background="#0f0e16">
+    android:background="@color/blue_black">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                app:cardBackgroundColor="#29282c"
+                app:cardBackgroundColor="@color/card_grey"
                 app:cardCornerRadius="25dp">
 
                 <LinearLayout
@@ -119,7 +119,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                app:cardBackgroundColor="#29282c"
+                app:cardBackgroundColor="@color/card_grey"
                 app:cardCornerRadius="25dp">
                 <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="wrap_content"
@@ -146,7 +146,7 @@
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark"
         app:liftOnScroll="true"
-        android:background="#0f0e16">
+        android:background="@color/app_bar">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
 
@@ -172,7 +172,7 @@
                 app:layout_collapseParallaxMultiplier="0.4"
                 android:src="@drawable/snow"
     app:shapeAppearanceOverlay="@style/roundImg"
-    app:tint="#6F000000"
+    app:tint="@color/shape_tint"
     android:tintMode="src_over">
         </com.google.android.material.imageview.ShapeableImageView>
         </com.github.matteobattilana.weather.WeatherView>

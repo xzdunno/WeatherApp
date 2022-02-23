@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="text_scrim_height_top">50dp</dimen>
-    <dimen name="text_scrim_height_bottom">88dp</dimen>
-</resources>

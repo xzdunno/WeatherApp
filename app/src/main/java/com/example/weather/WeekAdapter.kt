@@ -34,10 +34,6 @@ override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHol
     return CustomViewHolderWeek(view)
 }
 override fun onBindViewHolder(holder: CustomViewHolderWeek, position: Int) {
-    var sdf = SimpleDateFormat("EEEE")
-    var d = Date()
-    holder.weekDayTxt.text= sdf.format(d.time+position*1000*60*60*24)
-        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
     holder.bind(listData?.get(position)!!)
 }
 
@@ -56,5 +52,6 @@ class CustomViewHolderWeek(var view: View):RecyclerView.ViewHolder(view){
             else Picasso.get().load("http://openweathermap.org/img/wn/${week.icon}@2x.png").into(weekIcon)
         weekTempDayTxt.text=week.maxTemp+"°"
         weekTempNightTxt.text=week.minTemp+"°"
+        weekDayTxt.text=week.dayOfWeek
     }
 }

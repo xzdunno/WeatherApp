@@ -3,7 +3,6 @@ package com.example.weather
 
 import android.Manifest
 import android.app.Activity
-import android.app.Notification
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
@@ -43,6 +42,8 @@ import okhttp3.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
+import java.util.*
+import kotlin.collections.HashMap
 
 
 @AndroidEntryPoint
@@ -136,10 +137,8 @@ class MainActivity : AppCompatActivity(),LocationListener {
         val isGPSEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
         // проверяем что GPS включен
         val cor=mViewModel.getCoords()
-        //Log.d("cor",cor.lat+" "+cor.lon)
         if(cor==null){
             if (isGPSEnabled) {
-                // Log.d("latlon1",kok?.latitude.toString()+" "+kok?.longitude.toString())
                 lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 6000, 10f, this)
                 kok=lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
                 if(kok!=null){
@@ -155,17 +154,13 @@ class MainActivity : AppCompatActivity(),LocationListener {
                     }
                 }
 
-                /*lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)!!.latitude.toString(),lm.getLastKnownLocation(
-                        LocationManager.GPS_PROVIDER)!!.longitude.toString()*/
             } else {
                 Toast.makeText(this, "Пожалуйста, включите GPS! =)", Toast.LENGTH_LONG).show()
             }}
         else{
             lonCur=cor.lon
             latCur=cor.lat
-            GlobalScope.launch(Dispatchers.IO) {mViewModel.apiCall(options())
-                mViewModel.getCurWeath(options(),cor.cityName)
-                mViewModel.getWeekWeath(options())
+            GlobalScope.launch(Dispatchers.IO) {mViewModel.apiCall(options(),cor.cityName)
             }
         }
 
@@ -210,17 +205,10 @@ class MainActivity : AppCompatActivity(),LocationListener {
                 }
         }
     }
-    override fun onLocationChanged(location: Location) {
-        /*if(kok==null){
-            latCur=location.latitude.toString()
-            lonCur=location.longitude.toString()
-        }*/}
+    override fun onLocationChanged(location: Location) {}
     override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
     override fun onProviderEnabled(provider: String) {}
     override fun onProviderDisabled(provider: String) {}
-    /*bind.fragBtn.setOnClickListener(){
-bind.drawdLay.openDrawer(GravityCompat.START)
-    }*/
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
             when (resultCode) {
@@ -230,9 +218,7 @@ bind.drawdLay.openDrawer(GravityCompat.START)
                         latCur=place.latLng?.latitude.toString()
                         lonCur=place.latLng?.longitude.toString()
 
-                        GlobalScope.launch(Dispatchers.IO) {mViewModel.apiCall(options())
-                            mViewModel.getCurWeath(options(),place.name.toString())
-                            mViewModel.getWeekWeath(options())
+                        GlobalScope.launch(Dispatchers.IO) {mViewModel.apiCall(options(),place.name.toString())
                         }
                         Log.i(TAG, "Place: ${place.name}, ${place.id}, ${place.latLng}")
                     }
@@ -250,8 +236,6 @@ bind.drawdLay.openDrawer(GravityCompat.START)
             return
         }
         super.onActivityResult(requestCode, resultCode, data)}
-    val nots=Notification()
-    val kfk=System.currentTimeMillis()
     fun options():MutableMap<String,String>{
         val options:MutableMap<String,String> =HashMap()
         options.put("lat",latCur)
@@ -273,24 +257,23 @@ bind.drawdLay.openDrawer(GravityCompat.START)
                     val arr=JSONObject(str)
                     val local=JSONObject(arr.getString("local_names"))
                     var check:String?=null
-                    try{check=local.getString("ru")}
+                    val locale: String = Locale.getDefault().country.toLowerCase()
+                    try{check=local.getString(locale)}
                     catch (e:JSONException){
                     }
                     if(check!=null)
                         runOnUiThread {
                             options.put("exclude","minutely,daily,alerts,hourly")
-                            mViewModel.getCurWeath(options, local.getString("ru"))}
+                            mViewModel.apiCall(options, local.getString(locale))}
                     else runOnUiThread {
                         options.put("exclude","minutely,daily,alerts,hourly")
-                        mViewModel.getCurWeath(options, local.getString("en"))}
+                        mViewModel.apiCall(options, local.getString("en"))}
 
                 }
             })
         }
-        GlobalScope.launch(Dispatchers.IO) {mViewModel.apiCall(options())
-
+        GlobalScope.launch(Dispatchers.IO) {
             run("http://api.openweathermap.org/geo/1.0/reverse?lat=$latCur&lon=$lonCur&limit=1&appid=${BuildConfig.OPEN_WEATHER_KEY}&lang=ru",options())
-            mViewModel.getWeekWeath(options())
         }
 
 

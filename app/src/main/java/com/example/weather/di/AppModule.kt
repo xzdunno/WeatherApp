@@ -29,23 +29,13 @@ class AppModule {
     }
     @Provides
     @Singleton
-    fun getCurDB(context: Application): CurDB {
-        return CurDB.getDataBase(context)
-    }
-    @Provides
-    @Singleton
-    fun getCurWeathDBDao(database: CurDB): CurWeathDBDao {
-        return database.getCurWeathDBDao()
-    }
-    @Provides
-    @Singleton
-    fun getWeekDB(context: Application): WeekDataBase {
-        return WeekDataBase.getWeekDB(context)
-    }
-    @Provides
-    @Singleton
-    fun getWeekDBDao(database: WeekDataBase):WeekDBDao  {
+    fun getWeekDBDao(database: AppDataBase): WeekDBDao {
         return database.getWeekDBDao()
+    }
+    @Provides
+    @Singleton
+    fun getCurWeathDBDao(database: AppDataBase): CurWeathDBDao {
+        return database.getCurWeathDBDao()
     }
     @Provides
     @Singleton
