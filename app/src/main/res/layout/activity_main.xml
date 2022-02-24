@@ -28,7 +28,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:layout_margin="5dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -112,7 +113,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:nestedScrollingEnabled="false"/>
+                        android:nestedScrollingEnabled="false"
+                        android:layout_margin="15dp"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
@@ -124,7 +126,8 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/recWeek">
+                    android:id="@+id/recWeek"
+                    android:layout_margin="15dp">
 
                 </androidx.recyclerview.widget.RecyclerView>
             </androidx.cardview.widget.CardView>
