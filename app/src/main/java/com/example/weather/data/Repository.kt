@@ -1,6 +1,8 @@
 package com.example.weather.data
 
 import androidx.lifecycle.LiveData
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.weather.HourAdapter
 //import com.example.weather.GPSTracker
 import com.example.weather.db.*
 
@@ -11,9 +13,9 @@ import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
-
 class Repository @Inject constructor(private val retroInterface: RetroInterface, private val appDBDao: AppDBDao, private val curDBDao:CurWeathDBDao,private val weekDBDao: WeekDBDao) {
-fun getCoords():CurWeathPat{
+
+    fun getCoords():CurWeathPat{
     return curDBDao.getCoords(1)
 }
     fun getAllData(): LiveData<List<Hourly>> {

@@ -2,7 +2,6 @@ package com.example.weather.viemodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-//import com.example.weather.GPSTracker
 import com.example.weather.data.Repository
 import com.example.weather.db.CurWeathPat
 import com.example.weather.db.Hourly

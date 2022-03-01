@@ -1,5 +1,6 @@
 package com.example.weather.viemodel
 
+import android.graphics.Paint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
