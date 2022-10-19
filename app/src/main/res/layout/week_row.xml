@@ -1,40 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    >
-<TextView
-    android:layout_width="140dp"
-    android:layout_height="wrap_content"
-    android:id="@+id/weekDayTxt"
-    android:layout_marginLeft="5dp"
-    android:textSize="19sp"
-    android:layout_marginTop="6dp"
-    android:textColor="@color/white">
-</TextView>
+    android:layout_height="50dp">
 
-    <ImageView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginLeft="35dp"
-        android:id="@+id/weekIcon">
-    </ImageView>
-    <TextView
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/weekTempDayTxt"
-        android:textSize="18sp"
-        android:layout_marginLeft="15dp"
-        android:textColor="@color/white"
-        android:layout_marginTop="6dp"></TextView>
-    <TextView
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/weekTempNightTxt"
-        android:textSize="18sp"
-        android:layout_marginLeft="7dp"
-        android:textColor="@color/white"
-        android:layout_marginTop="6dp"
-        ></TextView>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/weekDayTxt"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/guide45"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/guide30h"></TextView>
+
+        <ImageView
+            android:id="@+id/weekIcon"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="@id/guide70h"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="@id/guide60"
+            app:layout_constraintStart_toStartOf="@id/guide45"
+            app:layout_constraintTop_toTopOf="parent"></ImageView>
+
+        <TextView
+            android:id="@+id/weekTempDayTxt"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/guide80"
+            app:layout_constraintStart_toStartOf="@id/guide60"
+            app:layout_constraintTop_toTopOf="@id/guide30h"></TextView>
+
+        <TextView
+            android:id="@+id/weekTempNightTxt"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/guide80"
+            app:layout_constraintTop_toTopOf="@id/guide30h"></TextView>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide45"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.45"></androidx.constraintlayout.widget.Guideline>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide60"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.7"></androidx.constraintlayout.widget.Guideline>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide80"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.85"></androidx.constraintlayout.widget.Guideline>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide30h"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.15"></androidx.constraintlayout.widget.Guideline>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide70h"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.9"></androidx.constraintlayout.widget.Guideline>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

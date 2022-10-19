@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ProjectPlainTextFileTypeManager">
-    <file url="file://$PROJECT_DIR$/app/src/main/res/menu/laydrawmenu.xml" />
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/dudni/AndroidStudioProjects/weather4/app/src/main/res/drawable/ic_baseline_arrow_back_24.xml" value="0.1" />
+        <entry key="..\:/Users/dudni/AndroidStudioProjects/weather4/app/src/main/res/drawable/weekbtn.xml" value="0.1" />
+        <entry key="..\:/Users/dudni/AndroidStudioProjects/weather4/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/dudni/AndroidStudioProjects/weather4/app/src/main/res/layout/city_fragment.xml" value="0.2" />
+        <entry key="..\:/Users/dudni/AndroidStudioProjects/weather4/app/src/main/res/layout/city_row.xml" value="0.1" />
+        <entry key="..\:/Users/dudni/AndroidStudioProjects/weather4/app/src/main/res/layout/searchcity_activity.xml" value="0.25416666666666665" />
+      </map>
+    </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />

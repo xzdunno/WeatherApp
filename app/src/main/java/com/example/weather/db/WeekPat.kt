@@ -6,9 +6,9 @@ import java.time.DayOfWeek
 
 @Entity(tableName = "WeekDB")
 data class WeekPat(
-    @PrimaryKey(autoGenerate = true) val id:Int,
-    val dayOfWeek:String,
-    val icon:String,
-    val minTemp:String,
-    val maxTemp:String
+    @PrimaryKey(autoGenerate = true) val id: Int,
+    val dayOfWeek: String,
+    val icon: String,
+    val minTemp: String,
+    val maxTemp: String
 )

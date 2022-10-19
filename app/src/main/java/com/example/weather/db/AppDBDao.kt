@@ -10,12 +10,12 @@ import com.example.weather.model.Hour
 @Dao
 interface AppDBDao {
 
-@Query("select * from AppDB order by id asc")
-fun getAllData():LiveData<List<Hourly>>
+    @Query("select * from AppDB order by id asc")
+    fun getAllData(): LiveData<List<Hourly>>
 
-@Insert(onConflict = OnConflictStrategy.REPLACE)
-fun insertRecord(hourly: Hourly)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertRecord(hourly: Hourly)
 
-@Query("delete from AppDB")
-fun deleteAll()
+    @Query("delete from AppDB")
+    fun deleteAll()
 }

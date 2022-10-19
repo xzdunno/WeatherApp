@@ -7,6 +7,6 @@ import retrofit2.http.QueryMap
 
 interface RetroInterface {
     @GET("data/2.5/onecall?")
-    fun getDataHour(@QueryMap options:MutableMap<String,String>): Call<All>
+    fun getDataHour(@QueryMap options: MutableMap<String, String>): Call<All>
 
 }

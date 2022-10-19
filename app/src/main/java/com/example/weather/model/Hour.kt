@@ -1,5 +1,7 @@
 package com.example.weather.model
+
 data class Hour(
-     val temp:String,
-     val humidity:String,
-     val weather:List<Icon>)
+    val temp: String,
+    val humidity: String,
+    val weather: List<Icon>
+)
