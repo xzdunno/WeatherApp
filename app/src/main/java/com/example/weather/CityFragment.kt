@@ -82,7 +82,7 @@ class CityFragment(val city: MutableLiveData<SuggestionData>) : Fragment() {
             val text = edit.text.toString()
             if (text != "") {
                 dadataClient.suggest(
-                    AddressSuggestionRequest(edit.text.toString(), 5, "en")
+                    AddressSuggestionRequest(edit.text.toString(), 5, "ru")
                 ) {
                     val sug = it.suggestions
                     val list = mutableListOf<SuggestionData>()
