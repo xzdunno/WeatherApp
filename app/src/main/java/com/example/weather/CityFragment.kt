@@ -20,6 +20,7 @@ import app.illabo.dadatasuggestions.DadataSuggestions
 import app.illabo.dadatasuggestions.model.AddressSuggestionRequest
 import app.illabo.dadatasuggestions.model.SuggestionData
 import com.example.weather.adapter.CityAdapter
+import java.util.*
 
 class CityFragment(val city: MutableLiveData<SuggestionData>) : Fragment() {
     lateinit var recViewCityAdapter: CityAdapter
@@ -78,7 +79,7 @@ class CityFragment(val city: MutableLiveData<SuggestionData>) : Fragment() {
             val text = edit.text.toString()
             if (text != "") {
                 dadataClient.suggest(
-                    AddressSuggestionRequest(edit.text.toString(), 5, "ru")
+                    AddressSuggestionRequest(edit.text.toString(), 5, Locale.getDefault().country.toLowerCase())
                 ) {
                     val sug = it.suggestions
                     val list = mutableListOf<SuggestionData>()

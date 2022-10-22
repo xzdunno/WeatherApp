@@ -40,7 +40,6 @@ import java.io.IOException
 import java.util.*
 import kotlin.collections.HashMap
 
-
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), LocationListener {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -57,6 +56,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
         super.onCreate(savedInstanceState)//вызывает метод суперкласса AppCompatActivity()
         bind = ActivityMainBinding.inflate(layoutInflater)//Binding
         setContentView(bind.root)
+        
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         mViewModel =
             ViewModelProvider(this).get(MainViewModel::class.java) //инициализируем объект MainViewModel
@@ -66,21 +66,25 @@ class MainActivity : AppCompatActivity(), LocationListener {
             recyclerViewAdapter = HourAdapter()
             adapter = recyclerViewAdapter
         }
+        //настраиваем адаптеры recyclerview
         bind.recWeek.apply {
             layoutManager =
                 LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
             recViewWeekAdapter = WeekAdapter()
             adapter = recViewWeekAdapter
         }
+        //обзёрверы, при успешном выполнении запроса, срабатывают
         mViewModel.getAllData().observe(this@MainActivity, Observer<List<Hourly>> {
             recyclerViewAdapter.setListData(it)
             recyclerViewAdapter.notifyDataSetChanged()
         })
+
         mViewModel.getAllDataWeek().observe(this@MainActivity, Observer<List<WeekPat>> {
             recViewWeekAdapter.setListData(it)
             recViewWeekAdapter.notifyDataSetChanged()
         })
-        mViewModel.getLastRec().observe(this@MainActivity) {
+
+        mViewModel.getLastRec().observe(this@MainActivity) {//выставляет параметры для ui
             if (it != null) {
                 bind.curTemp.text = it.temp + "°"
                 bind.curFeels.text = it.feels_like + "°"
@@ -111,14 +115,17 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 }
             }
         }
-        city.observe(this) {
+
+        city.observe(this) {//требуется для получения информации с recview dadata
             lonCur = it.geo_lon.toString()
             latCur = it.geo_lat.toString()
             CoroutineScope(Dispatchers.IO).launch {
                 mViewModel.apiCall(options(), it.city.toString())
             }
         }
+
         Places.initialize(applicationContext, placesKey)
+
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         val permissions: Array<String> = arrayOf( //запрос на предоставление разрешений
             "android.permission.ACCESS_FINE_LOCATION",
@@ -126,6 +133,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
         )
 
         ActivityCompat.requestPermissions(this@MainActivity, permissions, 123)
+
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_COARSE_LOCATION
@@ -166,12 +174,12 @@ class MainActivity : AppCompatActivity(), LocationListener {
             }
         }
 
-        bind.searchCityBtn.setOnClickListener() {
+        bind.searchCityBtn.setOnClickListener() {//переход к фрагменту
             supportFragmentManager.beginTransaction().replace(R.id.constraint, CityFragment(city))
                 .commit()
         }
 
-        bind.backBtn.setOnClickListener() {
+        bind.backBtn.setOnClickListener() {//листенер для кнопки, определяющей нынешнее местоположение
             if (ContextCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACCESS_COARSE_LOCATION
@@ -199,12 +207,12 @@ class MainActivity : AppCompatActivity(), LocationListener {
             }
         }
     }
-
     override fun onLocationChanged(location: Location) {}
     override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
     override fun onProviderEnabled(provider: String) {}
     override fun onProviderDisabled(provider: String) {}
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {}
+
     fun options(): MutableMap<String, String> {
         val options: MutableMap<String, String> = HashMap()
         options.put("lat", latCur)

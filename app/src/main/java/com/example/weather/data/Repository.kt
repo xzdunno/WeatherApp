@@ -111,7 +111,7 @@ class Repository @Inject constructor(
 
         })
     }
-    fun locale(url: String, options: MutableMap<String, String>) {
+    fun locale(url: String, options: MutableMap<String, String>) {//чтобы узнать, есть ли название города на местном языке,
         val client = OkHttpClient()
         val request = Request.Builder()
             .url(url)

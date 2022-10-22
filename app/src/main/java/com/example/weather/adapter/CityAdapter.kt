@@ -11,7 +11,7 @@ import app.illabo.dadatasuggestions.model.SuggestionData
 import com.example.weather.R
 
 
-class CityAdapter(var kok: MutableLiveData<SuggestionData>) :
+class CityAdapter(var city: MutableLiveData<SuggestionData>) :
     RecyclerView.Adapter<CustomViewHolderCity>() {
     private var listData: List<SuggestionData>? = null
     fun setListData(listData: List<SuggestionData>?) {
@@ -33,7 +33,7 @@ class CityAdapter(var kok: MutableLiveData<SuggestionData>) :
     override fun onBindViewHolder(holder: CustomViewHolderCity, position: Int) {
         holder.bind(listData?.get(position)!!)
         holder.txtCity.setOnClickListener {
-            kok.value = listData?.get(position)!!
+            city.value = listData?.get(position)!!
         }
 
     }
