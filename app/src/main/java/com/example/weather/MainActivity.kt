@@ -45,16 +45,12 @@ import kotlin.collections.HashMap
 class MainActivity : AppCompatActivity(), LocationListener {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private val placesKey = BuildConfig.MAPS_API_KEY
-    private val AUTOCOMPLETE_REQUEST_CODE = 1
-    private var PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 100
-    private var locationPermissionGranted = false
     lateinit var bind: ActivityMainBinding
     var kok: Location? = null
     var latCur = "50"
     var lonCur = "50"
     val city: MutableLiveData<SuggestionData> = MutableLiveData()
     lateinit var mViewModel: MainViewModel
-    private val client = OkHttpClient()
     private lateinit var recyclerViewAdapter: HourAdapter
     private lateinit var recViewWeekAdapter: WeekAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -123,9 +119,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
             }
         }
         Places.initialize(applicationContext, placesKey)
-        val placesClient: PlacesClient = Places.createClient(this)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        val permissions: Array<String> = arrayOf(
+        val permissions: Array<String> = arrayOf( //запрос на предоставление разрешений
             "android.permission.ACCESS_FINE_LOCATION",
             "android.permission.ACCESS_COARSE_LOCATION"
         )
@@ -220,11 +215,13 @@ class MainActivity : AppCompatActivity(), LocationListener {
         return options
     }
 
-   fun setting() {
+    fun setting() {
 
         CoroutineScope(Dispatchers.IO).launch {
-            mViewModel.locale("http://api.openweathermap.org/geo/1.0/reverse?lat=$latCur&lon=$lonCur&limit=1&appid=${BuildConfig.OPEN_WEATHER_KEY}&lang=ru",
-                options())
+            mViewModel.locale(
+                "http://api.openweathermap.org/geo/1.0/reverse?lat=$latCur&lon=$lonCur&limit=1&appid=${BuildConfig.OPEN_WEATHER_KEY}&lang=ru",
+                options()
+            )
         }
     }
 }
