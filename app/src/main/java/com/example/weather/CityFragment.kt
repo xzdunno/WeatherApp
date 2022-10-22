@@ -1,8 +1,6 @@
 package com.example.weather
 
 import android.content.Context
-import android.content.Intent
-import android.location.Geocoder
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -12,9 +10,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
@@ -23,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import app.illabo.dadatasuggestions.DadataSuggestions
 import app.illabo.dadatasuggestions.model.AddressSuggestionRequest
 import app.illabo.dadatasuggestions.model.SuggestionData
-import java.util.*
+import com.example.weather.adapter.CityAdapter
 
 class CityFragment(val city: MutableLiveData<SuggestionData>) : Fragment() {
     lateinit var recViewCityAdapter: CityAdapter

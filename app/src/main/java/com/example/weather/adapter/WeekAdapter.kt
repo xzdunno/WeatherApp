@@ -1,21 +1,13 @@
-package com.example.weather.viemodel
+package com.example.weather.adapter
 
-import android.graphics.Paint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.weather.CustomViewHolder
 import com.example.weather.R
-import com.example.weather.db.Hourly
 import com.example.weather.db.WeekPat
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.hour_row.view.*
 import kotlinx.android.synthetic.main.week_row.view.*
-import java.text.SimpleDateFormat
-import java.time.DayOfWeek
-import java.util.*
 
 class WeekAdapter() : RecyclerView.Adapter<CustomViewHolderWeek>() {
     //var DaysOfWeek=

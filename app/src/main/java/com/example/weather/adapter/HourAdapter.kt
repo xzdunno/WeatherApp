@@ -1,14 +1,13 @@
-package com.example.weather
+package com.example.weather.adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.weather.R
 import com.example.weather.db.Hourly
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.hour_row.view.*
-import java.text.SimpleDateFormat
-import java.util.*
 
 class HourAdapter(/*val all: MainActivity.all*/) : RecyclerView.Adapter<CustomViewHolder>() {
     private var listData: List<Hourly>? = null

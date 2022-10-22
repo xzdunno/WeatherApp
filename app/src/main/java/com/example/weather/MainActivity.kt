@@ -2,8 +2,6 @@ package com.example.weather
 
 
 import android.Manifest
-import android.app.Activity
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -12,7 +10,6 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -22,16 +19,16 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.illabo.dadatasuggestions.model.SuggestionData
+import com.example.weather.adapter.HourAdapter
 import com.example.weather.databinding.ActivityMainBinding
 import com.example.weather.db.Hourly
 import com.example.weather.db.WeekPat
 import com.example.weather.viemodel.MainViewModel
-import com.example.weather.viemodel.WeekAdapter
+import com.example.weather.adapter.WeekAdapter
 import com.github.matteobattilana.weather.PrecipType
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.DayOfWeek
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
@@ -121,7 +118,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
         city.observe(this) {
             lonCur = it.geo_lon.toString()
             latCur = it.geo_lat.toString()
-            GlobalScope.launch(Dispatchers.IO) {
+            CoroutineScope(Dispatchers.IO).launch {
                 mViewModel.apiCall(options(), it.city.toString())
             }
         }
@@ -169,7 +166,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
         } else {
             lonCur = cor.lon
             latCur = cor.lat
-            GlobalScope.launch(Dispatchers.IO) {
+            CoroutineScope(Dispatchers.IO).launch {
                 mViewModel.apiCall(options(), cor.cityName)
             }
         }
@@ -223,41 +220,11 @@ class MainActivity : AppCompatActivity(), LocationListener {
         return options
     }
 
-    fun setting() {
-        fun run(url: String, options: MutableMap<String, String>) {
-            val request = Request.Builder()
-                .url(url)
-                .build()
-            client.newCall(request).enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {}
-                override fun onResponse(call: Call, response: Response) {
-                    val str = response.body()?.string().toString()!!.drop(1).dropLast(1)
-                    val arr = JSONObject(str)
-                    val local = JSONObject(arr.getString("local_names"))
-                    var check: String? = null
-                    val locale: String = Locale.getDefault().country.toLowerCase()
-                    try {
-                        check = local.getString(locale)
-                    } catch (e: JSONException) {
-                    }
-                    if (check != null)
-                        runOnUiThread {
-                            options.put("exclude", "minutely,daily,alerts,hourly")
-                            mViewModel.apiCall(options, local.getString(locale))
-                        }
-                    else runOnUiThread {
-                        options.put("exclude", "minutely,daily,alerts,hourly")
-                        mViewModel.apiCall(options, local.getString("en"))
-                    }
+   fun setting() {
 
-                }
-            })
-        }
-        GlobalScope.launch(Dispatchers.IO) {
-            run(
-                "http://api.openweathermap.org/geo/1.0/reverse?lat=$latCur&lon=$lonCur&limit=1&appid=${BuildConfig.OPEN_WEATHER_KEY}&lang=ru",
-                options()
-            )
+        CoroutineScope(Dispatchers.IO).launch {
+            mViewModel.locale("http://api.openweathermap.org/geo/1.0/reverse?lat=$latCur&lon=$lonCur&limit=1&appid=${BuildConfig.OPEN_WEATHER_KEY}&lang=ru",
+                options())
         }
     }
 }

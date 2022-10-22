@@ -1,15 +1,19 @@
 package com.example.weather.data
 
+import android.os.Handler
 import androidx.lifecycle.LiveData
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.weather.HourAdapter
 //import com.example.weather.GPSTracker
 import com.example.weather.db.*
 
 import com.example.weather.model.All
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONException
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -20,6 +24,7 @@ class Repository @Inject constructor(
     private val curDBDao: CurWeathDBDao,
     private val weekDBDao: WeekDBDao
 ) {
+    private val handler=Handler()
 
     fun getCoords(): CurWeathPat {
         return curDBDao.getCoords(1)
@@ -104,6 +109,36 @@ class Repository @Inject constructor(
                 //
             }
 
+        })
+    }
+    fun locale(url: String, options: MutableMap<String, String>) {
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url(url)
+            .build()
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: IOException) {}
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                val str = response.body()?.string().toString()!!.drop(1).dropLast(1)
+                val arr = JSONObject(str)
+                val local = JSONObject(arr.getString("local_names"))
+                var check: String? = null
+                val locale: String = Locale.getDefault().country.toLowerCase()
+                try {
+                    check = local.getString(locale)
+                } catch (e: JSONException) {
+                }
+                if (check != null)
+                    handler.post {
+                        options.put("exclude", "minutely,daily,alerts,hourly")
+                        apiCall(options, local.getString(locale))
+                    }
+                else handler.post {
+                    options.put("exclude", "minutely,daily,alerts,hourly")
+                    apiCall(options, local.getString("en"))
+                }
+
+            }
         })
     }
 }

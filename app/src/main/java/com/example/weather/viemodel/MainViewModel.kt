@@ -26,4 +26,7 @@ class MainViewModel @Inject constructor(private val repository: Repository):View
     fun getCoords():CurWeathPat{
         return repository.getCoords()
     }
+    fun locale(url: String, options: MutableMap<String, String>){
+        repository.locale(url, options)
+    }
 }

@@ -1,15 +1,14 @@
-package com.example.weather
+package com.example.weather.adapter
 
-import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import app.illabo.dadatasuggestions.model.SuggestionData
+import com.example.weather.R
 
 
 class CityAdapter(var kok: MutableLiveData<SuggestionData>) :
